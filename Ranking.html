@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ARRAIÁ DO OVÍDIO - 2025</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fff8e1;
+      padding: 20px;
+      color: #4e342e;
+    }
+
+    h2 {
+      text-align: center;
+      color: #bf360c;
+      font-size: 2em;
+    }
+
+    label {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    input, select, button {
+      margin: 5px;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #ffcc80;
+      color: #4e342e;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #ffa726;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #ffb74d;
+      color: #3e2723;
+    }
+
+    .btns {
+      margin-top: 20px;
+    }
+
+    .icon {
+      margin-right: 8px;
+    }
+
+    .qr-section {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .qr-section img {
+      width: 200px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎊 ARRAIÁ DO OVÍDIO - 2025 🎊</h2>
+
+  <label>Grupo:</label>
+  <input type="text" id="grupoInput" placeholder="Nome do grupo" required>
+
+  <label>Prenda:</label>
+  <select id="prendaSelect">
+    <option value="10">🎁 Brinquedo - 10 pontos</option>
+    <option value="20">🧺 Cesta Básica - 20 pontos</option>
+    <option value="5">📚 Livro - 5 pontos</option>
+    <option value="15">👕 Roupa - 15 pontos</option>
+    <option value="8">✏️ Material Escolar - 8 pontos</option>
+  </select>
+
+  <button onclick="adicionarPrenda()">➕ Adicionar</button>
+
+  <h3>🏆 Ranking do Arraiá</h3>
+  <table id="rankingTable">
+    <thead>
+      <tr>
+        <th>Posição</th>
+        <th>Grupo</th>
+        <th>Total de Pontos</th>
+      </tr>
+    </thead>
+    <tbody id="rankingBody">
+      <!-- Ranking dinâmico -->
+    </tbody>
+  </table>
+
+  <div class="btns">
+    <button onclick="imprimirRanking()">🖨️ Imprimir Ranking</button>
+    <button onclick="enviarEmail()">📧 Enviar por E-mail</button>
+  </div>
+
+  <div class="qr-section">
+    <h3>📱 Acesse pelo celular</h3>
+    <p>Escaneie o QR Code abaixo para acessar o ranking:</p>
+    <img src="qr_arraia_ovidio_2025.png" alt="QR Code Arraiá do Ovídio 2025">
+  </div>
+
+  <script>
+    let ranking = {};
+
+    window.onload = function () {
+      const dadosSalvos = localStorage.getItem("rankingGincana");
+      if (dadosSalvos) {
+        ranking = JSON.parse(dadosSalvos);
+        atualizarRanking();
+      }
+    };
+
+    function adicionarPrenda() {
+      const grupo = document.getElementById("grupoInput").value.trim();
+      const pontos = parseInt(document.getElementById("prendaSelect").value);
+
+      if (!grupo) {
+        alert("Digite o nome do grupo.");
+        return;
+      }
+
+      if (!ranking[grupo]) {
+        ranking[grupo] = 0;
+      }
+
+      ranking[grupo] += pontos;
+      salvarDados();
+      atualizarRanking();
+
+      document.getElementById("grupoInput").value = "";
+    }
+
+    function atualizarRanking() {
+      const tbody = document.getElementById("rankingBody");
+      tbody.innerHTML = "";
+
+      const gruposOrdenados = Object.entries(ranking).sort((a, b) => b[1] - a[1]);
+
+      gruposOrdenados.forEach(([grupo, total], index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${grupo}</td>
+          <td>${total} pontos</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function salvarDados() {
+      localStorage.setItem("rankingGincana", JSON.stringify(ranking));
+    }
+
+    function imprimirRanking() {
+      window.print();
+    }
+
+    function enviarEmail() {
+      let corpo = "Ranking do ARRAIÁ DO OVÍDIO - 2025:%0D%0A%0D%0A";
+      const gruposOrdenados = Object.entries(ranking).sort((a, b) => b[1] - a[1]);
+
+      gruposOrdenados.forEach(([grupo, total], index) => {
+        corpo += `${index + 1}. ${grupo} - ${total} pontos%0D%0A`;
+      });
+
+      window.location.href = `mailto:?subject=Ranking%20do%20Arraiá%20do%20Ovídio%202025&body=${corpo}`;
+    }
+  </script>
+</body>
+</html>
